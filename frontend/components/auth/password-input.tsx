@@ -16,14 +16,14 @@ export const PasswordInput = React.forwardRef<HTMLInputElement, PasswordInputPro
         <Input
           ref={ref}
           type={visible ? "text" : "password"}
-          className={cn("pr-10", className)}
+          className={cn("pr-12", className)}
           {...props}
         />
         <button
           type="button"
           onClick={() => setVisible((current) => !current)}
           aria-label={visible ? "Hide password" : "Show password"}
-          className="absolute right-1.5 top-1/2 -translate-y-1/2 rounded-lg p-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+          className="absolute right-2 top-1/2 -translate-y-1/2 p-2 text-neutral-400 transition-colors hover:text-neutral-900"
         >
           {visible ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
         </button>

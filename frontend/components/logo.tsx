@@ -1,24 +1,35 @@
-import { Sparkles } from "lucide-react";
+import Image from "next/image";
 
 import { cn } from "@/lib/utils";
 
-export function Logo({
-  className,
-  showText = true,
-}: {
-  className?: string;
-  showText?: boolean;
-}) {
+export function Logo({ className }: { className?: string }) {
   return (
-    <div className={cn("flex items-center gap-2.5", className)}>
-      <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 text-white shadow-sm">
-        <Sparkles className="h-4.5 w-4.5" />
-      </span>
-      {showText ? (
-        <span className="text-[17px] font-semibold tracking-tight text-slate-900">
-          DocuMind
-        </span>
-      ) : null}
-    </div>
+    <Image
+      src="/logo-bg-rem.png"
+      alt="RAG — Retrieval-Augmented Generation"
+      width={494}
+      height={505}
+      className={cn("h-12 w-auto", className)}
+    />
+  );
+}
+
+export function LogoMark({ className }: { className?: string }) {
+  return (
+    <span
+      aria-hidden
+      className={cn(
+        "relative flex shrink-0 items-center justify-center overflow-hidden bg-white",
+        className,
+      )}
+    >
+      <Image
+        src="/logo.png"
+        alt=""
+        width={594}
+        height={608}
+        className="h-full w-full object-contain"
+      />
+    </span>
   );
 }

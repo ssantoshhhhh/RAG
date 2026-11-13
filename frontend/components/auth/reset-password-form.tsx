@@ -1,7 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ArrowLeft, ArrowRight, Loader2 } from "lucide-react";
+import { ArrowLeft, ArrowRight, Loader2, Lock } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
@@ -10,10 +10,22 @@ import { toast } from "sonner";
 import { AuthError } from "@/components/auth/auth-error";
 import { FieldError } from "@/components/auth/field-error";
 import { PasswordInput } from "@/components/auth/password-input";
+import {
+  authButton,
+  authCard,
+  authIcon,
+  authInput,
+  authLabel,
+  authMicro,
+  AuthBadge,
+  AuthMeta,
+  AuthStatusStrip,
+} from "@/components/auth/auth-ui";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { ApiError } from "@/lib/api";
 import { useResetPassword } from "@/lib/queries";
+import { cn } from "@/lib/utils";
 import { resetPasswordSchema, type ResetPasswordValues } from "@/lib/validation";
 
 export function ResetPasswordForm() {
@@ -50,24 +62,30 @@ export function ResetPasswordForm() {
 
   if (!token) {
     return (
-      <div className="space-y-6">
-        <div className="space-y-1.5">
-          <h1 className="text-2xl font-semibold tracking-tight text-slate-900">
-            Invalid reset link
-          </h1>
-          <p className="text-sm text-muted-foreground">
-            This password reset link is missing or incomplete. Request a new one to continue.
-          </p>
-        </div>
+      <div className={cn(authCard, "shadow-[6px_6px_0_rgba(17,17,17,0.05)]")}>
+        <AuthMeta label="Credential reset [Sec_auth]" right="Token: Missing" />
 
-        <Button asChild className="w-full">
-          <Link href="/forgot-password">Request a new link</Link>
+        <span className="mb-4 flex h-10 w-10 items-center justify-center border border-[#d91e4a] bg-[#fff1f4] font-mono text-lg font-semibold text-[#d91e4a]">
+          !
+        </span>
+        <h1 className="text-[30px] font-semibold leading-tight tracking-[-0.02em] text-neutral-950">
+          Invalid reset link
+        </h1>
+        <p className="mt-2 text-sm leading-6 text-neutral-600">
+          This password reset link is missing or incomplete. Request a new one to continue.
+        </p>
+
+        <Button asChild className={cn(authButton, "mt-6")}>
+          <Link href="/forgot-password">
+            <span>Request a new link</span>
+            <ArrowRight className="h-4 w-4" />
+          </Link>
         </Button>
 
-        <p className="text-center text-sm text-muted-foreground">
+        <p className="mt-5">
           <Link
             href="/login"
-            className="inline-flex items-center gap-1.5 font-medium text-indigo-600 hover:underline"
+            className="inline-flex items-center gap-1.5 font-mono text-[9px] font-semibold uppercase tracking-[0.14em] text-neutral-500 hover:text-neutral-950"
           >
             <ArrowLeft className="h-3.5 w-3.5" />
             Back to sign in
@@ -78,61 +96,104 @@ export function ResetPasswordForm() {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="space-y-1.5">
-        <h1 className="text-2xl font-semibold tracking-tight text-slate-900">
+    <div className={cn(authCard, "shadow-[6px_6px_0_rgba(17,17,17,0.05)]")}>
+      <div className="mb-5 flex items-center justify-between gap-3">
+        <Link
+          href="/login"
+          className="flex items-center gap-1.5 font-mono text-[9px] font-semibold uppercase tracking-[0.16em] text-neutral-500 hover:text-neutral-950"
+        >
+          <ArrowLeft className="h-3.5 w-3.5" />
+          Back to sign in
+        </Link>
+        <AuthBadge>Secure</AuthBadge>
+      </div>
+
+      <AuthMeta label="Credential reset [Sec_auth]" right="Token: Single_use" />
+
+      <div className="space-y-2">
+        <h1 className="text-[30px] font-semibold leading-tight tracking-[-0.02em] text-neutral-950">
           Set a new password
         </h1>
-        <p className="text-sm text-muted-foreground">
+        <p className="text-sm leading-6 text-neutral-600">
           Choose a new password for your DocuMind account.
         </p>
       </div>
 
-      <AuthError message={errorMessage} />
+      <div className="mt-5">
+        <AuthError message={errorMessage} />
+      </div>
 
-      <form onSubmit={onSubmit} className="space-y-4" noValidate>
-        <div className="space-y-1.5">
-          <Label htmlFor="password">New password</Label>
-          <PasswordInput
-            id="password"
-            autoComplete="new-password"
-            placeholder="At least 8 characters"
-            aria-invalid={Boolean(errors.password)}
-            {...register("password")}
-          />
+      <form onSubmit={onSubmit} className="mt-5 space-y-4" noValidate>
+        <div className="space-y-2">
+          <div className="flex items-center justify-between gap-3">
+            <Label htmlFor="password" className={authLabel}>
+              New password
+            </Label>
+            <span className={authMicro}>Encrypted</span>
+          </div>
+          <div className="relative">
+            <Lock className={authIcon} />
+            <PasswordInput
+              id="password"
+              autoComplete="new-password"
+              placeholder="At least 8 characters"
+              aria-invalid={Boolean(errors.password)}
+              className={cn(authInput, "pr-12")}
+              {...register("password")}
+            />
+          </div>
           {errors.password?.message ? (
             <FieldError message={errors.password.message} />
           ) : (
-            <p className="text-xs text-muted-foreground">
+            <p className="flex items-center gap-1.5 font-mono text-[9px] uppercase tracking-[0.06em] text-neutral-500">
+              <span className="h-1 w-1 bg-[#d91e4a]" />
               Use at least 8 characters with a letter and a number.
             </p>
           )}
         </div>
 
-        <div className="space-y-1.5">
-          <Label htmlFor="confirmPassword">Confirm new password</Label>
-          <PasswordInput
-            id="confirmPassword"
-            autoComplete="new-password"
-            placeholder="Re-enter your password"
-            aria-invalid={Boolean(errors.confirmPassword)}
-            {...register("confirmPassword")}
-          />
+        <div className="space-y-2">
+          <div className="flex items-center justify-between gap-3">
+            <Label htmlFor="confirmPassword" className={authLabel}>
+              Confirm new password
+            </Label>
+            <span className={authMicro}>Match_check</span>
+          </div>
+          <div className="relative">
+            <Lock className={authIcon} />
+            <PasswordInput
+              id="confirmPassword"
+              autoComplete="new-password"
+              placeholder="Re-enter your password"
+              aria-invalid={Boolean(errors.confirmPassword)}
+              className={cn(authInput, "pr-12")}
+              {...register("confirmPassword")}
+            />
+          </div>
           <FieldError message={errors.confirmPassword?.message} />
         </div>
 
-        <Button type="submit" className="w-full" disabled={isSubmitting}>
-          {isSubmitting ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
-          Update password
-          {!isSubmitting ? <ArrowRight className="h-4 w-4" /> : null}
+        <Button type="submit" className={authButton} disabled={isSubmitting}>
+          <span>{isSubmitting ? "Updating" : "Update password"}</span>
+          {isSubmitting ? (
+            <Loader2 className="h-4 w-4 animate-spin" />
+          ) : (
+            <ArrowRight className="h-4 w-4" />
+          )}
         </Button>
       </form>
 
-      <p className="text-center text-sm text-muted-foreground">
-        <Link href="/login" className="font-medium text-indigo-600 hover:underline">
+      <div className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-[#eeeaf6] pt-5">
+        <span className="text-sm text-neutral-600">Changed your mind?</span>
+        <Link
+          href="/login"
+          className="font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-neutral-950 underline decoration-[#d91e4a] decoration-2 underline-offset-4 hover:text-[#d91e4a]"
+        >
           Back to sign in
         </Link>
-      </p>
+      </div>
+
+      <AuthStatusStrip left="Enclave: Isolated" right="TLS 1.3 Active" />
     </div>
   );
 }

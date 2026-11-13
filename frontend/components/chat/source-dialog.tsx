@@ -24,11 +24,11 @@ export function SourceDialog({
     <Dialog open={Boolean(source)} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-xl">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 pr-6">
-            <FileText className="h-4 w-4 text-indigo-600" />
+          <DialogTitle className="flex items-center gap-2 pr-6 text-[14px]">
+            <FileText className="h-4 w-4 text-[#d91e4a]" />
             <span className="truncate">{source?.filename}</span>
           </DialogTitle>
-          <DialogDescription>
+          <DialogDescription className="font-mono text-[10px] uppercase tracking-[0.08em]">
             Page {source?.page_number}
             {typeof source?.similarity === "number"
               ? ` · ${Math.round(source.similarity * 100)}% match`
@@ -36,7 +36,7 @@ export function SourceDialog({
           </DialogDescription>
         </DialogHeader>
 
-        <blockquote className="max-h-72 overflow-y-auto rounded-xl border border-border bg-slate-50/70 p-4 text-sm leading-relaxed text-slate-700">
+        <blockquote className="max-h-72 overflow-y-auto border border-neutral-200 bg-[#fafafa] p-4 text-[12.5px] leading-6 text-neutral-600">
           {source?.excerpt}
         </blockquote>
 

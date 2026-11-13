@@ -1,12 +1,12 @@
 "use client";
 
 import {
+  ArrowRight,
   FileText,
   History,
   Loader2,
   MessageSquarePlus,
   SendHorizonal,
-  Sparkles,
   UploadCloud,
 } from "lucide-react";
 import Link from "next/link";
@@ -17,6 +17,7 @@ import { toast } from "sonner";
 import { ConversationPanel } from "@/components/chat/conversation-panel";
 import { MessageBubble } from "@/components/chat/message-bubble";
 import { ScopeDialog } from "@/components/chat/scope-dialog";
+import { Logo, LogoMark } from "@/components/logo";
 import { SourceDialog } from "@/components/chat/source-dialog";
 import { ConfirmDialog } from "@/components/confirm-dialog";
 import { ErrorState } from "@/components/error-state";
@@ -54,24 +55,22 @@ function ThinkingBubble({ question, userName }: { question: string; userName: st
   return (
     <>
       <div className="flex flex-row-reverse gap-3">
-        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-slate-900 text-[11px] font-semibold text-white">
+        <span className="flex h-8 w-8 shrink-0 items-center justify-center bg-neutral-950 font-mono text-[10px] font-semibold text-white">
           {initials(userName)}
         </span>
-        <div className="max-w-[85%] rounded-2xl rounded-tr-md bg-indigo-600 px-4 py-3 text-sm leading-relaxed text-white">
+        <div className="max-w-[85%] bg-neutral-950 px-4 py-3 text-[13px] leading-6 text-white">
           <p className="whitespace-pre-wrap break-words">{question}</p>
         </div>
       </div>
       <div className="flex flex-row gap-3">
-        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-indigo-500 to-violet-600 text-white">
-          <Sparkles className="h-3.5 w-3.5" />
-        </span>
-        <div className="flex items-center gap-2 rounded-2xl rounded-tl-md border border-border bg-card px-4 py-3 text-sm text-muted-foreground shadow-sm">
+        <LogoMark className="h-8 w-8 border border-neutral-300" />
+        <div className="flex items-center gap-2.5 border border-neutral-200 bg-white px-4 py-3 text-[12px] text-neutral-500">
           <span className="flex gap-1">
-            <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-indigo-400 [animation-delay:-0.3s]" />
-            <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-indigo-400 [animation-delay:-0.15s]" />
-            <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-indigo-400" />
+            <span className="h-1.5 w-1.5 animate-bounce bg-neutral-400 [animation-delay:-0.3s]" />
+            <span className="h-1.5 w-1.5 animate-bounce bg-neutral-400 [animation-delay:-0.15s]" />
+            <span className="h-1.5 w-1.5 animate-bounce bg-neutral-400" />
           </span>
-          Searching your documents…
+          Searching your documents...
         </div>
       </div>
     </>
@@ -200,11 +199,11 @@ export function ChatView({
       return (
         <div className="mx-auto w-full max-w-3xl space-y-6 px-4 py-6">
           <div className="flex justify-end">
-            <Skeleton className="h-16 w-2/3 rounded-2xl" />
+            <Skeleton className="h-16 w-2/3" />
           </div>
           <div className="flex gap-3">
-            <Skeleton className="h-8 w-8 rounded-full" />
-            <Skeleton className="h-28 w-3/4 rounded-2xl" />
+            <Skeleton className="h-8 w-8" />
+            <Skeleton className="h-28 w-3/4" />
           </div>
         </div>
       );
@@ -233,31 +232,30 @@ export function ChatView({
     if (empty) {
       return (
         <div className="flex h-full flex-col items-center justify-center px-6 py-10 text-center">
-          <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-600 text-white shadow-sm">
-            <Sparkles className="h-6 w-6" />
-          </span>
-          <h2 className="mt-5 max-w-md text-xl font-semibold tracking-tight text-slate-900">
+          <Logo className="h-20 w-auto" />
+          <h2 className="mt-5 max-w-md text-[22px] font-semibold leading-tight tracking-[-0.02em] text-neutral-950">
             {indexedCount > 0
               ? "Ask anything about your documents"
               : "Add a document to start asking"}
           </h2>
-          <p className="mt-1.5 max-w-md text-sm leading-relaxed text-muted-foreground">
+          <p className="mt-2 max-w-md text-[13px] leading-6 text-neutral-500">
             {indexedCount > 0
               ? "DocuMind retrieves the most relevant passages and answers with page-level citations you can verify."
               : "Your knowledge base is empty. Upload a PDF or TXT file and wait a few seconds for indexing."}
           </p>
 
           {indexedCount > 0 ? (
-            <div className="mt-6 flex flex-wrap justify-center gap-2">
+            <div className="mt-6 flex max-w-xl flex-wrap justify-center gap-2">
               {SUGGESTIONS.map((suggestion) => (
                 <button
                   key={suggestion}
                   type="button"
                   onClick={() => void handleAsk(suggestion)}
                   disabled={ask.isPending}
-                  className="rounded-full border border-border bg-card px-3.5 py-2 text-xs font-medium text-slate-600 shadow-sm transition-colors hover:border-indigo-200 hover:bg-indigo-50 hover:text-indigo-700 disabled:opacity-60"
+                  className="inline-flex items-center gap-2 rounded-full border border-neutral-300 bg-white px-4 py-2 text-[11.5px] font-medium text-neutral-700 transition-colors hover:bg-neutral-50 hover:text-neutral-950 disabled:opacity-60"
                 >
                   {suggestion}
+                  <ArrowRight className="h-3 w-3 text-neutral-400" />
                 </button>
               ))}
             </div>
@@ -274,7 +272,7 @@ export function ChatView({
     }
 
     return (
-      <div className="mx-auto flex w-full max-w-3xl flex-col gap-6 px-4 py-6 sm:px-6">
+      <div className="mx-auto flex w-full max-w-3xl flex-col gap-7 px-4 py-6 sm:px-6">
         {messages.map((message) => (
           <MessageBubble
             key={message.id}
@@ -292,10 +290,14 @@ export function ChatView({
   };
 
   return (
-    <div className="flex h-[calc(100dvh-6.5rem)] min-h-[540px] flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-sm lg:h-[calc(100dvh-4rem)] lg:flex-row">
-      <aside className="hidden w-[280px] shrink-0 flex-col border-r border-border lg:flex">
-        <div className="border-b border-border p-3">
-          <Button variant="outline" className="w-full justify-start" onClick={handleNewChat}>
+    <div className="flex h-full min-h-0 flex-col overflow-hidden bg-white lg:flex-row">
+      <aside className="hidden w-[300px] shrink-0 flex-col border-r border-neutral-200 lg:flex">
+        <div className="border-b border-neutral-200 p-3">
+          <Button
+            variant="outline"
+            className="w-full justify-start text-[12px] font-medium"
+            onClick={handleNewChat}
+          >
             <MessageSquarePlus className="h-4 w-4" />
             New conversation
           </Button>
@@ -313,24 +315,31 @@ export function ChatView({
       </aside>
 
       <section className="flex min-h-0 min-w-0 flex-1 flex-col">
-        <header className="flex items-center justify-between gap-3 border-b border-border px-3 py-2.5 sm:px-4">
+        <header className="flex items-center justify-between gap-3 border-b border-neutral-200 px-3 py-3 sm:px-5">
           <div className="flex min-w-0 items-center gap-2">
             <Button
               variant="ghost"
               size="icon"
-              className="lg:hidden"
+              className="h-8 w-8 shrink-0 lg:hidden"
               aria-label="Open conversation history"
               onClick={() => setHistoryOpen(true)}
             >
               <History className="h-4 w-4" />
             </Button>
             <div className="min-w-0">
-              <p className="truncate text-sm font-semibold text-slate-900">
-                {conversation.data?.title ?? "New conversation"}
-              </p>
-              <p className="truncate text-xs text-muted-foreground">
+              <div className="flex min-w-0 items-center gap-2">
+                <p className="truncate text-[13px] font-semibold text-neutral-950">
+                  {conversation.data?.title ?? "New conversation"}
+                </p>
+                <span className="hidden shrink-0 border border-neutral-200 bg-neutral-50 px-2 py-0.5 font-mono text-[9px] uppercase tracking-[0.08em] text-neutral-500 sm:inline">
+                  {indexedCount > 0
+                    ? `${indexedCount} indexed document${indexedCount === 1 ? "" : "s"} available`
+                    : "No indexed documents yet"}
+                </span>
+              </div>
+              <p className="mt-0.5 truncate text-[10.5px] text-neutral-500 sm:hidden">
                 {indexedCount > 0
-                  ? `${indexedCount} indexed document${indexedCount === 1 ? "" : "s"} available`
+                  ? `${indexedCount} indexed document${indexedCount === 1 ? "" : "s"}`
                   : "No indexed documents yet"}
               </p>
             </div>
@@ -340,16 +349,16 @@ export function ChatView({
             variant="outline"
             size="sm"
             onClick={() => setScopeOpen(true)}
-            className="max-w-[52%] shrink-0"
+            className="max-w-[52%] shrink-0 justify-between gap-2 text-[11px] font-medium sm:max-w-none"
           >
-            <FileText className="h-3.5 w-3.5 shrink-0" />
+            <FileText className="h-3.5 w-3.5 shrink-0 text-[#d91e4a]" />
             <span className="truncate">{scopeLabel}</span>
           </Button>
         </header>
 
         <div className="min-h-0 flex-1 overflow-y-auto">{renderMessagesArea()}</div>
 
-        <div className="border-t border-border bg-card p-3 sm:p-4">
+        <div className="border-t border-neutral-200 bg-white p-3 sm:p-4">
           <form
             onSubmit={(event) => {
               event.preventDefault();
@@ -371,10 +380,13 @@ export function ChatView({
                     void handleAsk(draft);
                   }
                 }}
-                placeholder="Ask a question about your documents…"
+                placeholder="Ask a question about your documents..."
                 aria-label="Your question"
                 disabled={ask.isPending}
-                className={cn("min-h-[52px] py-3.5 pr-14", ask.isPending && "opacity-70")}
+                className={cn(
+                  "min-h-[64px] py-4 pr-14 text-[13px]",
+                  ask.isPending && "opacity-70",
+                )}
                 rows={1}
               />
               <Button
@@ -391,11 +403,19 @@ export function ChatView({
                 )}
               </Button>
             </div>
-            <div className="mt-2 flex flex-wrap items-center justify-between gap-1 px-1 text-[11px] text-muted-foreground">
-              <span className="truncate">Scoped to: {scopeLabel}</span>
+            <div className="mt-2 flex flex-wrap items-center justify-between gap-1 px-1 font-mono text-[9px] uppercase tracking-[0.08em] text-neutral-400">
+              <span className="flex min-w-0 items-center gap-1.5 truncate">
+                <span className="h-1.5 w-1.5 shrink-0 bg-[#d91e4a]" />
+                Scoped to: {scopeLabel}
+              </span>
               <span className="hidden sm:inline">Enter to send · Shift + Enter for a new line</span>
             </div>
           </form>
+        </div>
+
+        <div className="flex items-center justify-between gap-3 border-t border-neutral-200 px-4 py-2 font-mono text-[9px] uppercase tracking-[0.1em] text-neutral-400">
+          <span>Conversations are saved automatically.</span>
+          <span className="hidden sm:inline">DocuMind v2.4 · Monoline Engine</span>
         </div>
       </section>
 
@@ -406,7 +426,7 @@ export function ChatView({
             <DialogDescription>Switch between your saved conversations.</DialogDescription>
           </DialogHeader>
           <div className="flex h-[65vh] flex-col">
-            <div className="border-b border-border p-3">
+            <div className="border-b border-neutral-200 p-3">
               <Button variant="outline" className="w-full justify-start" onClick={handleNewChat}>
                 <MessageSquarePlus className="h-4 w-4" />
                 New conversation
@@ -452,7 +472,9 @@ export function ChatView({
         <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle>Rename conversation</DialogTitle>
-            <DialogDescription>Give this thread a title you will recognize later.</DialogDescription>
+            <DialogDescription>
+              Give this thread a title you will recognize later.
+            </DialogDescription>
           </DialogHeader>
           <form
             onSubmit={(event) => {

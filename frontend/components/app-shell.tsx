@@ -1,13 +1,14 @@
 "use client";
 
 import {
+  ArrowRight,
   FileText,
   LayoutDashboard,
   LogOut,
-  MessageSquare,
   Menu,
+  MessageSquare,
+  MoreHorizontal,
   Settings,
-  Sparkles,
   X,
 } from "lucide-react";
 import Link from "next/link";
@@ -51,14 +52,17 @@ function NavLinks({ pathname, onNavigate }: { pathname: string; onNavigate?: () 
             href={item.href}
             onClick={onNavigate}
             className={cn(
-              "flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors",
+              "flex items-center gap-3 px-3 py-2.5 font-mono text-[11px] font-medium uppercase tracking-[0.14em] transition-colors",
               active
-                ? "bg-indigo-50 text-indigo-700"
-                : "text-slate-600 hover:bg-slate-50 hover:text-slate-900",
+                ? "bg-neutral-950 text-white"
+                : "text-neutral-600 hover:bg-neutral-100 hover:text-neutral-950",
             )}
           >
-            <item.icon className={cn("h-4 w-4", active ? "text-indigo-600" : "text-slate-400")} />
-            {item.label}
+            <item.icon
+              className={cn("h-4 w-4", active ? "text-white" : "text-neutral-500")}
+            />
+            <span className="flex-1">{item.label}</span>
+            {active ? <span className="h-1.5 w-1.5 bg-[#d91e4a]" /> : null}
           </Link>
         );
       })}
@@ -90,21 +94,26 @@ function SidebarContent({
 
   return (
     <div className="flex h-full flex-col">
-      <div className="px-5 py-5">
-        <Link href="/app/dashboard" onClick={onNavigate} aria-label="DocuMind home">
+      <div className="border-b border-neutral-200 px-5 py-5">
+        <Link href="/app/dashboard" onClick={onNavigate} aria-label="Home">
           <Logo />
         </Link>
       </div>
 
-      <div className="flex-1 overflow-y-auto px-3">
+      <div className="flex-1 overflow-y-auto px-4 py-5">
         <NavLinks pathname={pathname} onNavigate={onNavigate} />
 
-        <div className="mt-6 rounded-2xl border border-indigo-100 bg-gradient-to-br from-indigo-50/80 to-violet-50/60 p-4">
-          <div className="flex items-center gap-2 text-xs font-semibold text-indigo-700">
-            <Sparkles className="h-3.5 w-3.5" />
-            Knowledge base
+        <div className="mt-8 border border-neutral-200 bg-[#fafafa] p-4">
+          <div className="flex items-center justify-between gap-2">
+            <span className="flex items-center gap-2 font-mono text-[10px] font-semibold uppercase tracking-[0.16em] text-[#d91e4a]">
+              <span className="h-1.5 w-1.5 bg-[#d91e4a]" />
+              Knowledge base
+            </span>
+            <span className="font-mono text-[9px] uppercase tracking-[0.1em] text-neutral-400">
+              V1.2
+            </span>
           </div>
-          <p className="mt-2 text-xs leading-relaxed text-slate-600">
+          <p className="mt-2 font-mono text-[10px] uppercase leading-5 tracking-[0.04em] text-neutral-500">
             {stats
               ? `${stats.indexed_document_count} indexed document${
                   stats.indexed_document_count === 1 ? "" : "s"
@@ -114,31 +123,33 @@ function SidebarContent({
           <Link
             href="/app/documents"
             onClick={onNavigate}
-            className="mt-3 inline-flex text-xs font-medium text-indigo-700 hover:underline"
+            className="mt-3 inline-flex items-center gap-1.5 border-b border-neutral-950 pb-0.5 text-[11px] font-medium text-neutral-950 transition-colors hover:border-[#d91e4a] hover:text-[#d91e4a]"
           >
-            Manage documents →
+            Manage documents
+            <ArrowRight className="h-3 w-3" />
           </Link>
         </div>
       </div>
 
-      <div className="border-t border-border p-3">
+      <div className="border-t border-neutral-200 p-3">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <button
               type="button"
-              className="flex w-full items-center gap-3 rounded-xl px-2 py-2 text-left transition-colors hover:bg-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              className="flex w-full items-center gap-3 px-2 py-2 text-left transition-colors hover:bg-neutral-50 focus:outline-none"
             >
-              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-slate-900 text-xs font-semibold text-white">
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center bg-neutral-950 font-mono text-[11px] font-semibold text-white">
                 {initials(user?.name ?? "DocuMind")}
               </span>
               <span className="min-w-0 flex-1">
-                <span className="block truncate text-sm font-medium text-slate-900">
+                <span className="block truncate text-[13px] font-semibold text-neutral-950">
                   {user?.name ?? "Account"}
                 </span>
-                <span className="block truncate text-xs text-muted-foreground">
+                <span className="block truncate font-mono text-[10px] tracking-[0.02em] text-neutral-500">
                   {user?.email ?? ""}
                 </span>
               </span>
+              <MoreHorizontal className="h-4 w-4 shrink-0 text-neutral-400" />
             </button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" side="top" className="w-56">
@@ -164,15 +175,23 @@ function SidebarContent({
 export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const isChat = pathname.startsWith("/app/chat");
+  const activeLabel =
+    NAV_ITEMS.find((item) => isActive(pathname, item.href))?.label ?? "Workspace";
 
   return (
-    <div className="min-h-screen bg-background">
-      <aside className="fixed inset-y-0 left-0 z-30 hidden w-[260px] border-r border-border bg-card lg:block">
+    <div className="min-h-dvh bg-[#f7f7f8] lg:flex">
+      <aside className="fixed inset-y-0 left-0 z-30 hidden w-[300px] border-r border-neutral-200 bg-white lg:block">
         <SidebarContent pathname={pathname} />
       </aside>
 
-      <header className="sticky top-0 z-20 flex h-14 items-center justify-between border-b border-border bg-card/90 px-4 backdrop-blur lg:hidden">
-        <Logo />
+      <header className="sticky top-0 z-20 flex h-14 items-center justify-between border-b border-neutral-200 bg-white px-4 lg:hidden">
+        <div className="flex items-center gap-3">
+          <Logo className="h-9 w-auto" />
+          <span className="hidden font-mono text-[9px] uppercase tracking-[0.14em] text-neutral-400 sm:inline">
+            {activeLabel}
+          </span>
+        </div>
         <Button
           variant="ghost"
           size="icon"
@@ -188,14 +207,14 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           <button
             type="button"
             aria-label="Close navigation"
-            className="absolute inset-0 bg-slate-950/40"
+            className="absolute inset-0 bg-neutral-950/50"
             onClick={() => setMobileOpen(false)}
           />
-          <div className="absolute inset-y-0 left-0 w-[280px] border-r border-border bg-card shadow-xl">
+          <div className="absolute inset-y-0 left-0 w-[300px] border-r border-neutral-200 bg-white shadow-2xl">
             <button
               type="button"
               aria-label="Close navigation"
-              className="absolute right-3 top-4 rounded-lg p-1.5 text-muted-foreground hover:bg-muted"
+              className="absolute right-3 top-4 z-10 p-1.5 text-neutral-500 hover:bg-neutral-100 hover:text-neutral-950"
               onClick={() => setMobileOpen(false)}
             >
               <X className="h-4 w-4" />
@@ -205,8 +224,14 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         </div>
       ) : null}
 
-      <div className="lg:pl-[260px]">
-        <main className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
+      <div className="flex min-w-0 flex-1 flex-col lg:pl-[300px]">
+        <main
+          className={cn(
+            isChat
+              ? "h-[calc(100dvh-3.5rem)] shrink-0 overflow-hidden lg:h-dvh lg:flex-1"
+              : "flex-1 px-4 py-6 sm:px-6 lg:px-8 lg:py-8",
+          )}
+        >
           {children}
         </main>
       </div>

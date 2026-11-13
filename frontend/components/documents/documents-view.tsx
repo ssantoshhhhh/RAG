@@ -18,7 +18,6 @@ import { toast } from "sonner";
 import { ConfirmDialog } from "@/components/confirm-dialog";
 import { EmptyState } from "@/components/empty-state";
 import { ErrorState } from "@/components/error-state";
-import { PageHeader } from "@/components/page-header";
 import { StatusBadge } from "@/components/status-badge";
 import { UploadDialog } from "@/components/documents/upload-dialog";
 import { Badge } from "@/components/ui/badge";
@@ -62,74 +61,117 @@ function DocumentRow({
   retrying: boolean;
 }) {
   return (
-    <li className="flex items-start gap-3 px-4 py-3.5 transition-colors hover:bg-slate-50/70 sm:px-5">
-      <span className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-slate-100 text-slate-500">
-        <FileText className="h-4.5 w-4.5" />
-      </span>
-
-      <div className="min-w-0 flex-1">
-        <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
-          <Link
-            href={`/app/documents/${document.id}`}
-            className="truncate text-sm font-medium text-slate-900 hover:text-indigo-700 hover:underline"
-          >
-            {document.filename}
-          </Link>
-          {document.source !== "upload" ? (
-            <Badge variant="outline" className="text-[10px] uppercase tracking-wide">
-              {document.source}
-            </Badge>
+    <li className="flex flex-col gap-3 px-4 py-4 transition-colors hover:bg-neutral-50 sm:grid sm:grid-cols-[minmax(0,1fr)_150px_72px] sm:items-center sm:gap-4 sm:px-5">
+      <div className="flex min-w-0 items-center gap-3">
+        <span className="flex h-10 w-10 shrink-0 items-center justify-center border border-neutral-200 bg-neutral-50 font-mono text-[11px] font-semibold text-neutral-500">
+          {document.filename.slice(0, 1).toUpperCase()}
+        </span>
+        <div className="min-w-0 flex-1">
+          <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+            <Link
+              href={`/app/documents/${document.id}`}
+              className="truncate text-[12.5px] font-semibold text-neutral-950 hover:text-[#d91e4a]"
+            >
+              {document.filename}
+            </Link>
+            {document.source !== "upload" ? (
+              <Badge
+                variant="outline"
+                className="font-mono text-[9px] uppercase tracking-[0.1em]"
+              >
+                {document.source}
+              </Badge>
+            ) : null}
+          </div>
+          <p className="mt-1 truncate text-[11px] text-neutral-500">
+            {formatFileSize(document.file_size)} · {document.page_count} page
+            {document.page_count === 1 ? "" : "s"} · {document.chunk_count} chunk
+            {document.chunk_count === 1 ? "" : "s"} · {formatDate(document.created_at)}
+          </p>
+          {document.status === "FAILED" && document.failure_message ? (
+            <p className="mt-1 line-clamp-2 text-[11px] text-[#a31136]">
+              {document.failure_message}
+            </p>
           ) : null}
         </div>
-        <p className="mt-0.5 text-xs text-muted-foreground">
-          {formatFileSize(document.file_size)} · {document.page_count} page
-          {document.page_count === 1 ? "" : "s"} · {document.chunk_count} chunk
-          {document.chunk_count === 1 ? "" : "s"} · {formatDate(document.created_at)}
-        </p>
-        {document.status === "FAILED" && document.failure_message ? (
-          <p className="mt-1 line-clamp-2 text-xs text-red-600">{document.failure_message}</p>
-        ) : null}
       </div>
 
-      <div className="flex shrink-0 items-center gap-1.5">
+      <div className="flex items-center justify-between gap-3 sm:block">
         <StatusBadge status={document.status} />
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon" aria-label={`Actions for ${document.filename}`}>
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-48">
-            <DropdownMenuItem asChild>
-              <Link href={`/app/documents/${document.id}`}>
-                <ExternalLink />
-                Open details
-              </Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem asChild>
-              <a href={`/api/v1/documents/${document.id}/file`} target="_blank" rel="noreferrer">
-                <Download />
-                Download original
-              </a>
-            </DropdownMenuItem>
-            {document.status === "FAILED" ? (
-              <>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem disabled={retrying} onSelect={() => onRetry(document)}>
-                  <RefreshCw className={retrying ? "animate-spin" : undefined} />
-                  Retry processing
-                </DropdownMenuItem>
-              </>
-            ) : null}
-            <DropdownMenuSeparator />
-            <DropdownMenuItem destructive onSelect={() => onDelete(document)}>
-              <Trash2 />
-              Delete
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <div className="sm:hidden">
+          <ActionsMenu
+            document={document}
+            onRetry={onRetry}
+            onDelete={onDelete}
+            retrying={retrying}
+          />
+        </div>
+      </div>
+
+      <div className="hidden justify-end sm:flex">
+        <ActionsMenu
+          document={document}
+          onRetry={onRetry}
+          onDelete={onDelete}
+          retrying={retrying}
+        />
       </div>
     </li>
+  );
+}
+
+function ActionsMenu({
+  document,
+  onRetry,
+  onDelete,
+  retrying,
+}: {
+  document: DocumentItem;
+  onRetry: (document: DocumentItem) => void;
+  onDelete: (document: DocumentItem) => void;
+  retrying: boolean;
+}) {
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-8 w-8 text-neutral-400"
+          aria-label={`Actions for ${document.filename}`}
+        >
+          <MoreHorizontal className="h-4 w-4" />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-48">
+        <DropdownMenuItem asChild>
+          <Link href={`/app/documents/${document.id}`}>
+            <ExternalLink />
+            Open details
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem asChild>
+          <a href={`/api/v1/documents/${document.id}/file`} target="_blank" rel="noreferrer">
+            <Download />
+            Download original
+          </a>
+        </DropdownMenuItem>
+        {document.status === "FAILED" ? (
+          <>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem disabled={retrying} onSelect={() => onRetry(document)}>
+              <RefreshCw className={retrying ? "animate-spin" : undefined} />
+              Retry processing
+            </DropdownMenuItem>
+          </>
+        ) : null}
+        <DropdownMenuSeparator />
+        <DropdownMenuItem destructive onSelect={() => onDelete(document)}>
+          <Trash2 />
+          Delete
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }
 
@@ -180,55 +222,65 @@ export function DocumentsView({ initialStatus }: { initialStatus: string }) {
   };
 
   return (
-    <div className="space-y-6">
-      <PageHeader
-        title="Documents"
-        description={
-          documents.data
-            ? `${summary.total} document${summary.total === 1 ? "" : "s"} · ${summary.indexed} indexed`
-            : "Upload PDF and text files to build your knowledge base."
-        }
-        actions={
-          <Button onClick={() => setUploadOpen(true)}>
+    <div>
+      <div className="flex flex-col gap-4 border-b border-neutral-200 pb-5 sm:flex-row sm:items-center sm:justify-between">
+        <div className="min-w-0">
+          <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+            <h1 className="text-[20px] font-semibold uppercase tracking-[0.02em] text-neutral-950">
+              Documents
+            </h1>
+            <span className="font-mono text-[10px] uppercase tracking-[0.12em] text-neutral-500">
+              / {summary.total} document{summary.total === 1 ? "" : "s"} · {summary.indexed}{" "}
+              indexed
+            </span>
+          </div>
+        </div>
+        <Button
+          onClick={() => setUploadOpen(true)}
+          className="h-10 justify-between gap-4 px-4 font-mono text-[10px] uppercase tracking-[0.14em]"
+        >
+          <span className="flex items-center gap-2">
             <UploadCloud className="h-4 w-4" />
             Upload documents
-          </Button>
-        }
-      />
+          </span>
+        </Button>
+      </div>
 
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-        <div className="relative flex-1">
-          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-          <Input
-            value={search}
-            onChange={(event) => setSearch(event.target.value)}
-            placeholder="Search by filename…"
-            className="pl-9"
-            aria-label="Search documents"
-          />
-          {search ? (
-            <button
-              type="button"
-              aria-label="Clear search"
-              onClick={() => setSearch("")}
-              className="absolute right-2.5 top-1/2 -translate-y-1/2 rounded-md p-1 text-muted-foreground hover:bg-muted"
-            >
-              <X className="h-3.5 w-3.5" />
-            </button>
-          ) : null}
+      <div className="py-5">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+          <div className="relative flex-1">
+            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" />
+            <Input
+              value={search}
+              onChange={(event) => setSearch(event.target.value)}
+              placeholder="Search by filename..."
+              className="h-10 pl-9 text-[13px]"
+              aria-label="Search documents"
+            />
+            {search ? (
+              <button
+                type="button"
+                aria-label="Clear search"
+                onClick={() => setSearch("")}
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 text-neutral-400 hover:text-neutral-950"
+              >
+                <X className="h-3.5 w-3.5" />
+              </button>
+            ) : null}
+          </div>
+          <select
+            value={status}
+            onChange={(event) => setStatus(event.target.value as "" | DocumentStatus)}
+            aria-label="Filter by status"
+            className="h-10 border border-neutral-300 bg-white px-3.5 text-[12px] text-neutral-900 focus:outline-none focus:ring-1 focus:ring-neutral-950 sm:w-[170px]"
+          >
+            {STATUS_OPTIONS.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
         </div>
-        <select
-          value={status}
-          onChange={(event) => setStatus(event.target.value as "" | DocumentStatus)}
-          aria-label="Filter by status"
-          className="h-10 rounded-xl border border-input bg-card px-3.5 text-sm text-foreground shadow-sm focus:outline-none focus:ring-2 focus:ring-ring"
-        >
-          {STATUS_OPTIONS.map((option) => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-        </select>
       </div>
 
       {documents.isError ? (
@@ -242,15 +294,18 @@ export function DocumentsView({ initialStatus }: { initialStatus: string }) {
           onRetry={() => void documents.refetch()}
         />
       ) : documents.isLoading ? (
-        <div className="overflow-hidden rounded-2xl border border-border bg-card">
+        <div className="border border-neutral-200 bg-white">
           {[0, 1, 2, 3].map((index) => (
-            <div key={index} className="flex items-center gap-3 border-b border-border p-4 last:border-0">
-              <Skeleton className="h-10 w-10 rounded-xl" />
+            <div
+              key={index}
+              className="flex items-center gap-3 border-b border-neutral-200 p-4 last:border-0"
+            >
+              <Skeleton className="h-10 w-10" />
               <div className="flex-1 space-y-2">
                 <Skeleton className="h-4 w-1/3" />
                 <Skeleton className="h-3 w-1/2" />
               </div>
-              <Skeleton className="h-5 w-16 rounded-full" />
+              <Skeleton className="h-6 w-16" />
             </div>
           ))}
         </div>
@@ -284,8 +339,13 @@ export function DocumentsView({ initialStatus }: { initialStatus: string }) {
           }
         />
       ) : (
-        <div className="overflow-hidden rounded-2xl border border-border bg-card">
-          <ul className="divide-y divide-border">
+        <div className="border border-neutral-200 bg-white">
+          <div className="hidden grid-cols-[minmax(0,1fr)_150px_72px] items-center gap-4 border-b border-neutral-200 bg-[#fafafa] px-5 py-2.5 font-mono text-[9px] uppercase tracking-[0.16em] text-neutral-500 sm:grid">
+            <span>Document name & details</span>
+            <span>Status</span>
+            <span className="text-right">Actions</span>
+          </div>
+          <ul className="divide-y divide-neutral-200">
             {documents.data?.map((document) => (
               <DocumentRow
                 key={document.id}
@@ -296,7 +356,7 @@ export function DocumentsView({ initialStatus }: { initialStatus: string }) {
               />
             ))}
           </ul>
-          <div className="flex items-center justify-between border-t border-border bg-slate-50/60 px-5 py-2.5 text-xs text-muted-foreground">
+          <div className="flex items-center justify-between gap-3 border-t border-neutral-200 px-5 py-3 font-mono text-[10px] uppercase tracking-[0.1em] text-neutral-500">
             <span>
               Showing {documents.data?.length ?? 0} document
               {(documents.data?.length ?? 0) === 1 ? "" : "s"}
@@ -304,9 +364,11 @@ export function DocumentsView({ initialStatus }: { initialStatus: string }) {
             {documents.data?.some((document) => document.status === "PROCESSING") ? (
               <span className="flex items-center gap-1.5">
                 <RefreshCw className="h-3 w-3 animate-spin" />
-                Processing documents…
+                Processing documents...
               </span>
-            ) : null}
+            ) : (
+              <span>Page 1 of 1</span>
+            )}
           </div>
         </div>
       )}

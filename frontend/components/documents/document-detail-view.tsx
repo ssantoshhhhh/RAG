@@ -40,10 +40,10 @@ import { cn, formatDateTime, formatFileSize } from "@/lib/utils";
 function MetaItem({ label, value }: { label: string; value: string }) {
   return (
     <div className="space-y-1">
-      <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+      <dt className="font-mono text-[9px] font-medium uppercase tracking-[0.14em] text-neutral-500">
         {label}
       </dt>
-      <dd className="text-sm font-medium text-slate-900">{value}</dd>
+      <dd className="mt-1 text-[12.5px] font-medium text-neutral-950">{value}</dd>
     </div>
   );
 }
@@ -58,10 +58,10 @@ function DetailSkeleton() {
       </div>
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
         {Array.from({ length: 6 }).map((_, index) => (
-          <Skeleton key={index} className="h-14 rounded-xl" />
+          <Skeleton key={index} className="h-14" />
         ))}
       </div>
-      <Skeleton className="h-80 rounded-2xl" />
+      <Skeleton className="h-80" />
     </div>
   );
 }
@@ -141,18 +141,18 @@ export function DocumentDetailView({ documentId }: { documentId: string }) {
 
         <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div className="flex min-w-0 items-start gap-3">
-            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-indigo-50 text-indigo-600">
+            <span className="flex h-11 w-11 shrink-0 items-center justify-center border border-neutral-200 bg-neutral-50 text-neutral-500">
               <FileText className="h-5 w-5" />
             </span>
             <div className="min-w-0 space-y-1">
-              <h1 className="break-words text-xl font-semibold tracking-tight text-slate-900 sm:text-2xl">
+              <h1 className="break-words text-[20px] font-semibold tracking-[-0.02em] text-neutral-950 sm:text-[24px]">
                 {document.filename}
               </h1>
               <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
                 <StatusBadge status={document.status} />
                 <span>Uploaded {formatDateTime(document.created_at)}</span>
                 {document.source !== "upload" ? (
-                  <span className="rounded-full border border-border px-2 py-0.5 uppercase tracking-wide">
+                  <span className="border border-neutral-200 px-2 py-0.5 font-mono text-[9px] uppercase tracking-[0.1em] text-neutral-500">
                     {document.source}
                   </span>
                 ) : null}
@@ -182,10 +182,10 @@ export function DocumentDetailView({ documentId }: { documentId: string }) {
       </div>
 
       {document.status === "FAILED" ? (
-        <div className="flex flex-col gap-3 rounded-2xl border border-red-200 bg-red-50 p-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-col gap-3 border border-[#d91e4a]/30 bg-[#fff1f4] p-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="space-y-1">
-            <p className="text-sm font-medium text-red-800">Processing failed</p>
-            <p className="text-sm text-red-700">
+            <p className="text-[13px] font-semibold text-[#a31136]">Processing failed</p>
+            <p className="text-[12px] leading-5 text-[#a31136]">
               {document.failure_message ?? "An unexpected error occurred while indexing."}
             </p>
           </div>
@@ -241,17 +241,17 @@ export function DocumentDetailView({ documentId }: { documentId: string }) {
                   : "The original file as uploaded."}
               </CardDescription>
             </div>
-            <div className="inline-flex rounded-xl border border-border bg-slate-50 p-1">
+            <div className="inline-flex border border-neutral-200 bg-[#fafafa] p-1">
               {(["text", "original"] as const).map((value) => (
                 <button
                   key={value}
                   type="button"
                   onClick={() => setTab(value)}
                   className={cn(
-                    "rounded-lg px-3 py-1.5 text-xs font-medium capitalize transition-colors",
+                    "px-3 py-1.5 text-[11px] font-medium capitalize transition-colors",
                     tab === value
-                      ? "bg-white text-slate-900 shadow-sm"
-                      : "text-muted-foreground hover:text-slate-900",
+                      ? "bg-neutral-950 text-white"
+                      : "text-neutral-500 hover:text-neutral-950",
                   )}
                 >
                   {value === "text" ? "Extracted text" : "Original PDF"}
@@ -302,7 +302,7 @@ export function DocumentDetailView({ documentId }: { documentId: string }) {
                         value={page}
                         onChange={(event) => setPage(Number(event.target.value))}
                         aria-label="Select page"
-                        className="rounded-lg border border-input bg-card px-2 py-1 text-xs focus:outline-none focus:ring-2 focus:ring-ring"
+                        className="border border-neutral-300 bg-white px-2 py-1 text-[11px] focus:outline-none focus:ring-1 focus:ring-neutral-950"
                       >
                         {pages.map((item) => (
                           <option key={item.page_number} value={item.page_number}>
@@ -324,12 +324,12 @@ export function DocumentDetailView({ documentId }: { documentId: string }) {
                   </div>
                 ) : null}
 
-                <div className="rounded-xl border border-border bg-slate-50/60 p-4 sm:p-5">
-                  <p className="mb-2 text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                <div className="border border-neutral-200 bg-[#fafafa] p-4 sm:p-5">
+                  <p className="mb-2 font-mono text-[9px] font-medium uppercase tracking-[0.14em] text-neutral-500">
                     Page {currentPage?.page_number ?? 1}
                   </p>
                   <div className="max-h-[28rem] overflow-y-auto pr-1">
-                    <p className="whitespace-pre-wrap text-sm leading-relaxed text-slate-700">
+                    <p className="whitespace-pre-wrap text-[12.5px] leading-6 text-neutral-600">
                       {currentPage?.text}
                     </p>
                   </div>
@@ -337,7 +337,7 @@ export function DocumentDetailView({ documentId }: { documentId: string }) {
               </div>
             )
           ) : document.file_type === "pdf" ? (
-            <div className="overflow-hidden rounded-xl border border-border bg-slate-100">
+            <div className="overflow-hidden border border-neutral-200 bg-neutral-100">
               <iframe
                 src={`/api/v1/documents/${document.id}/file`}
                 title={document.filename}
@@ -345,7 +345,7 @@ export function DocumentDetailView({ documentId }: { documentId: string }) {
               />
             </div>
           ) : (
-            <div className="rounded-xl border border-dashed border-border px-6 py-10 text-center">
+            <div className="border border-dashed border-neutral-300 px-6 py-10 text-center">
               <p className="text-sm text-muted-foreground">
                 Text files have no visual preview — use the extracted text tab.
               </p>

@@ -1,26 +1,29 @@
-import { AlertCircle, CheckCircle2, Clock3, Loader2, UploadCloud } from "lucide-react";
-
-import { Badge } from "@/components/ui/badge";
 import type { DocumentStatus } from "@/lib/types";
 import { statusLabel } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 
-const VARIANTS: Record<
+const STYLES: Record<
   DocumentStatus,
-  { variant: "success" | "warning" | "info" | "secondary" | "destructive"; icon: React.ReactNode }
+  { box: string; dot: string }
 > = {
-  UPLOADED: { variant: "secondary", icon: <Clock3 className="h-3 w-3" /> },
-  PROCESSING: { variant: "info", icon: <Loader2 className="h-3 w-3 animate-spin" /> },
-  INDEXING: { variant: "warning", icon: <UploadCloud className="h-3 w-3" /> },
-  INDEXED: { variant: "success", icon: <CheckCircle2 className="h-3 w-3" /> },
-  FAILED: { variant: "destructive", icon: <AlertCircle className="h-3 w-3" /> },
+  UPLOADED: { box: "border-neutral-300 text-neutral-600", dot: "bg-neutral-400" },
+  PROCESSING: { box: "border-amber-300 bg-amber-50 text-amber-700", dot: "bg-amber-500" },
+  INDEXING: { box: "border-sky-300 bg-sky-50 text-sky-700", dot: "bg-sky-500" },
+  INDEXED: { box: "border-neutral-300 text-neutral-900", dot: "bg-[#d91e4a]" },
+  FAILED: { box: "border-[#d91e4a] bg-[#fff1f4] text-[#a31136]", dot: "bg-[#d91e4a]" },
 };
 
 export function StatusBadge({ status }: { status: DocumentStatus }) {
-  const config = VARIANTS[status] ?? VARIANTS.UPLOADED;
+  const style = STYLES[status] ?? STYLES.UPLOADED;
   return (
-    <Badge variant={config.variant} className="capitalize">
-      {config.icon}
+    <span
+      className={cn(
+        "inline-flex shrink-0 items-center gap-1.5 border px-2 py-1 font-mono text-[9px] font-semibold uppercase tracking-[0.12em]",
+        style.box,
+      )}
+    >
+      <span className={cn("h-1.5 w-1.5", style.dot)} />
       {statusLabel(status)}
-    </Badge>
+    </span>
   );
 }

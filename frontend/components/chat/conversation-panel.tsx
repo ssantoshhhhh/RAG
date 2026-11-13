@@ -34,12 +34,14 @@ export function ConversationPanel({
 }) {
   return (
     <div className="flex h-full min-h-0 flex-col">
-      <div className="flex items-center justify-between px-4 py-3.5">
-        <h2 className="text-sm font-semibold text-slate-900">Conversations</h2>
+      <div className="flex items-center justify-between px-4 py-3">
+        <h2 className="font-mono text-[9px] font-medium uppercase tracking-[0.16em] text-neutral-500">
+          Conversations
+        </h2>
         <Button
           variant="ghost"
           size="icon"
-          className="h-8 w-8"
+          className="h-7 w-7 text-neutral-500"
           aria-label="New conversation"
           onClick={onNew}
         >
@@ -59,24 +61,26 @@ export function ConversationPanel({
           </div>
         ) : !conversations || conversations.length === 0 ? (
           <div className="flex flex-col items-center gap-2 px-4 py-10 text-center">
-            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600">
-              <MessageSquare className="h-4.5 w-4.5" />
+            <span className="flex h-9 w-9 items-center justify-center border border-neutral-200 bg-neutral-50 text-neutral-400">
+              <MessageSquare className="h-4 w-4" />
             </span>
-            <p className="text-sm font-medium text-slate-900">No conversations yet</p>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-[12px] font-semibold text-neutral-950">No conversations yet</p>
+            <p className="text-[11px] leading-5 text-neutral-500">
               Ask your first question to start a thread.
             </p>
           </div>
         ) : (
-          <ul className="space-y-0.5">
+          <ul className="space-y-1">
             {conversations.map((conversation) => {
               const active = conversation.id === activeId;
               return (
                 <li key={conversation.id}>
                   <div
                     className={cn(
-                      "group flex items-center gap-1 rounded-xl pr-1 transition-colors",
-                      active ? "bg-indigo-50" : "hover:bg-slate-50",
+                      "group flex items-center gap-1 border pr-1 transition-colors",
+                      active
+                        ? "border-neutral-200 bg-[#fafafa]"
+                        : "border-transparent hover:bg-neutral-50",
                     )}
                   >
                     <Link
@@ -84,17 +88,22 @@ export function ConversationPanel({
                       onClick={onNavigate}
                       className="min-w-0 flex-1 px-3 py-2.5"
                     >
-                      <span
-                        className={cn(
-                          "block truncate text-sm",
-                          active
-                            ? "font-medium text-indigo-700"
-                            : "font-medium text-slate-700",
-                        )}
-                      >
-                        {conversation.title}
+                      <span className="flex items-center gap-2">
+                        <span
+                          className={cn(
+                            "min-w-0 flex-1 truncate text-[12px]",
+                            active
+                              ? "font-semibold text-neutral-950"
+                              : "font-medium text-neutral-600",
+                          )}
+                        >
+                          {conversation.title}
+                        </span>
+                        {active ? (
+                          <span className="h-1.5 w-1.5 shrink-0 bg-[#d91e4a]" />
+                        ) : null}
                       </span>
-                      <span className="block text-[11px] text-muted-foreground">
+                      <span className="mt-0.5 block text-[10.5px] text-neutral-400">
                         {formatRelativeTime(
                           conversation.last_message_at ?? conversation.updated_at,
                         )}
@@ -106,7 +115,7 @@ export function ConversationPanel({
                         <Button
                           variant="ghost"
                           size="icon"
-                          className="h-7 w-7 shrink-0 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 sm:data-[state=open]:opacity-100"
+                          className="h-7 w-7 shrink-0 text-neutral-400 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 sm:data-[state=open]:opacity-100"
                           aria-label={`Actions for ${conversation.title}`}
                         >
                           <MoreHorizontal className="h-3.5 w-3.5" />
@@ -132,8 +141,9 @@ export function ConversationPanel({
         )}
       </div>
 
-      <p className="border-t border-border px-4 py-2.5 text-[11px] text-muted-foreground">
-        Conversations are saved automatically.
+      <p className="flex items-center gap-2 border-t border-neutral-200 px-4 py-3 font-mono text-[9px] uppercase tracking-[0.1em] text-neutral-400">
+        <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+        Saved locally to session
       </p>
     </div>
   );

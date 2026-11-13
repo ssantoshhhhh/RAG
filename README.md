@@ -44,6 +44,10 @@ to Next.js; the API proxy forwards cookies and CSRF headers to FastAPI.
 
 ## Quick start (Docker)
 
+> For the complete step-by-step guide — including Ollama installation, every
+> Docker start/stop/log command, local development, backups, and troubleshooting
+> — see **[SETUP.md](./SETUP.md)**.
+
 Prerequisites: Docker Desktop (or Docker Engine + Compose v2), plus
 [Ollama](https://ollama.com) running on the host with the model pulled:
 
@@ -331,7 +335,7 @@ Frontend (from `frontend/`):
 
 ```bash
 npm run typecheck
-npm test               # 17 tests
+npm test               # 22 tests
 npm run build
 ```
 

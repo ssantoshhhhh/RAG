@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 @theme inline {
-  --font-sans: var(--font-inter);
+  --font-sans: var(--font-poppins);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -26,25 +26,25 @@
 }
 
 :root {
-  --background: #f8f9fc;
-  --foreground: #0f172a;
+  --background: #f7f7f8;
+  --foreground: #111111;
   --card: #ffffff;
-  --card-foreground: #0f172a;
+  --card-foreground: #111111;
   --popover: #ffffff;
-  --popover-foreground: #0f172a;
-  --primary: #4f46e5;
+  --popover-foreground: #111111;
+  --primary: #111111;
   --primary-foreground: #ffffff;
-  --secondary: #f1f5f9;
-  --secondary-foreground: #0f172a;
-  --muted: #f1f5f9;
-  --muted-foreground: #64748b;
-  --accent: #eef2ff;
-  --accent-foreground: #3730a3;
-  --destructive: #dc2626;
+  --secondary: #f2f2f3;
+  --secondary-foreground: #111111;
+  --muted: #f2f2f3;
+  --muted-foreground: #6b7280;
+  --accent: #f2f2f3;
+  --accent-foreground: #111111;
+  --destructive: #d91e4a;
   --destructive-foreground: #ffffff;
-  --border: #e5e9f0;
-  --input: #e2e8f0;
-  --ring: #6366f1;
+  --border: #e5e5e5;
+  --input: #d4d4d4;
+  --ring: #111111;
 }
 
 * {
@@ -58,15 +58,15 @@ html {
 body {
   background-color: var(--background);
   color: var(--foreground);
-  font-family: var(--font-inter), ui-sans-serif, system-ui, -apple-system, "Segoe UI",
+  font-family: var(--font-poppins), ui-sans-serif, system-ui, -apple-system, "Segoe UI",
     sans-serif;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
 
 ::selection {
-  background: #e0e7ff;
-  color: #312e81;
+  background: #111111;
+  color: #ffffff;
 }
 
 @keyframes overlay-show {
