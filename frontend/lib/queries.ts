@@ -15,6 +15,7 @@ import type {
   DashboardStats,
   DocumentItem,
   DocumentPreview,
+  ForgotPasswordResponse,
   HealthStatus,
   User,
 } from "@/lib/types";
@@ -64,6 +65,20 @@ export function useRegister() {
     onSuccess: (user) => {
       client.setQueryData(queryKeys.me, user);
     },
+  });
+}
+
+export function useForgotPassword() {
+  return useMutation({
+    mutationFn: (values: { email: string }) =>
+      api.post<ForgotPasswordResponse>("/auth/forgot-password", values, true),
+  });
+}
+
+export function useResetPassword() {
+  return useMutation({
+    mutationFn: (values: { token: string; password: string }) =>
+      api.post<void>("/auth/reset-password", values, true),
   });
 }
 

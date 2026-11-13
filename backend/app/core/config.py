@@ -22,8 +22,10 @@ class Settings(BaseSettings):
     jwt_algorithm: str = "HS256"
     access_token_expire_minutes: int = 30
     refresh_token_expire_days: int = 7
+    password_reset_expire_minutes: int = 30
     cookie_secure: bool = False
     cookie_domain: str | None = None
+    internal_api_key: str | None = None
 
     frontend_origin: str = "http://localhost:3000"
     cors_origins: str = "http://localhost:3000"

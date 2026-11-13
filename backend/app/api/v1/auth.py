@@ -1,7 +1,10 @@
+from hmac import compare_digest
+
 import jwt
 from fastapi import APIRouter, Depends, HTTPException, Request, Response, status
 from sqlalchemy.orm import Session
 
+from app.core.config import get_settings
 from app.core.deps import get_current_user
 from app.core.security import (
     REFRESH_COOKIE,
@@ -12,7 +15,14 @@ from app.core.security import (
 from app.db.session import get_db
 from app.models import User
 from app.repositories import user_repo
-from app.schemas.auth import LoginRequest, RegisterRequest, UserOut
+from app.schemas.auth import (
+    ForgotPasswordRequest,
+    ForgotPasswordResponse,
+    LoginRequest,
+    RegisterRequest,
+    ResetPasswordRequest,
+    UserOut,
+)
 from app.services import auth_service
 
 router = APIRouter(prefix="/auth", tags=["auth"])
@@ -64,6 +74,38 @@ def refresh(request: Request, response: Response, db: Session = Depends(get_db))
 
 @router.post("/logout", status_code=status.HTTP_204_NO_CONTENT)
 def logout(response: Response) -> None:
+    clear_auth_cookies(response)
+
+
+@router.post(
+    "/forgot-password",
+    response_model=ForgotPasswordResponse,
+    status_code=status.HTTP_202_ACCEPTED,
+)
+def forgot_password(
+    payload: ForgotPasswordRequest,
+    request: Request,
+    db: Session = Depends(get_db),
+) -> ForgotPasswordResponse:
+    settings = get_settings()
+    reset_url = auth_service.request_password_reset(db, str(payload.email))
+
+    trusted_caller = bool(settings.internal_api_key) and compare_digest(
+        request.headers.get("x-internal-key", ""), settings.internal_api_key or ""
+    )
+    if reset_url and settings.is_production and not trusted_caller:
+        reset_url = None
+
+    return ForgotPasswordResponse(
+        message=auth_service.GENERIC_RESET_MESSAGE, reset_url=reset_url
+    )
+
+
+@router.post("/reset-password", status_code=status.HTTP_204_NO_CONTENT)
+def reset_password(
+    payload: ResetPasswordRequest, response: Response, db: Session = Depends(get_db)
+) -> None:
+    auth_service.reset_password(db, token=payload.token, new_password=payload.password)
     clear_auth_cookies(response)
 
 

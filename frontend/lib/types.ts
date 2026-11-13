@@ -7,6 +7,11 @@ export interface User {
   created_at: string;
 }
 
+export interface ForgotPasswordResponse {
+  message: string;
+  reset_url: string | null;
+}
+
 export interface DocumentItem {
   id: string;
   filename: string;

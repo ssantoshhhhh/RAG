@@ -22,6 +22,25 @@ export const registerSchema = z
     path: ["confirmPassword"],
   });
 
+export const forgotPasswordSchema = z.object({
+  email: z.email("Enter a valid email address"),
+});
+
+export const resetPasswordSchema = z
+  .object({
+    password: z
+      .string()
+      .min(8, "Password must be at least 8 characters")
+      .max(128)
+      .regex(/[A-Za-z]/, "Password must contain a letter")
+      .regex(/[0-9]/, "Password must contain a number"),
+    confirmPassword: z.string(),
+  })
+  .refine((values) => values.password === values.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
+  });
+
 export const questionSchema = z.object({
   question: z
     .string()
@@ -36,6 +55,8 @@ export const renameConversationSchema = z.object({
 
 export type LoginValues = z.infer<typeof loginSchema>;
 export type RegisterValues = z.infer<typeof registerSchema>;
+export type ForgotPasswordValues = z.infer<typeof forgotPasswordSchema>;
+export type ResetPasswordValues = z.infer<typeof resetPasswordSchema>;
 export type QuestionValues = z.infer<typeof questionSchema>;
 
 export const MAX_UPLOAD_BYTES = 10 * 1024 * 1024;

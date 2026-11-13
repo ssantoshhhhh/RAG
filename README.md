@@ -166,6 +166,8 @@ All backend settings are environment variables loaded from the repository-root
 | `JWT_SECRET` | insecure dev value | Signing key for access/refresh tokens |
 | `ACCESS_TOKEN_EXPIRE_MINUTES` | `30` | Access cookie lifetime |
 | `REFRESH_TOKEN_EXPIRE_DAYS` | `7` | Refresh cookie lifetime |
+| `PASSWORD_RESET_EXPIRE_MINUTES` | `30` | Password reset link lifetime |
+| `INTERNAL_API_KEY` | empty | Shared with the Next.js proxy so it can fetch reset links in production |
 | `COOKIE_SECURE` | `false` | Set `true` behind HTTPS |
 | `FRONTEND_ORIGIN` / `CORS_ORIGINS` | `http://localhost:3000` | Allowed browser origins |
 | `BACKEND_URL` | `http://localhost:8000` | Next.js proxy target (frontend env) |
@@ -188,6 +190,13 @@ All backend settings are environment variables loaded from the repository-root
 
 Relative storage paths resolve against `backend/`, regardless of where the
 process is started from.
+
+Password reset emails are sent by the Next.js server using nodemailer. Configure
+`SMTP_HOST`, `SMTP_PORT`, `SMTP_USERNAME`, `SMTP_PASSWORD`, `SMTP_FROM`, and
+`SMTP_USE_TLS` in `frontend/.env.local` for local development (or in the root
+`.env` for Docker Compose). `INTERNAL_API_KEY` must match in both the backend and
+frontend. Without SMTP, the API returns the reset link outside production so the
+flow remains testable locally.
 
 ---
 
@@ -228,6 +237,8 @@ Unsafe methods also require the `X-CSRF-Token` header matching the readable
 | `POST` | `/auth/login` | Sign in |
 | `POST` | `/auth/refresh` | Rotate access/refresh cookies |
 | `POST` | `/auth/logout` | Clear cookies |
+| `POST` | `/auth/forgot-password` | Request a password reset link |
+| `POST` | `/auth/reset-password` | Set a new password with a reset token |
 | `GET` | `/auth/me` | Current user |
 | `GET` | `/documents` | List/search/filter documents |
 | `POST` | `/documents/upload` | Upload one or more files |
